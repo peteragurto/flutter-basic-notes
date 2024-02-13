@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "47777128269",
+    "project_id": "intro-flutter-agurto",
+    "storage_bucket": "intro-flutter-agurto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47777128269:android:b7ab07c392a6f4962ce104",
+        "android_client_info": {
+          "package_name": "com.example.intro_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDWKYAkwTLkw0hJjJhWC0LUVKrlw3RDvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
