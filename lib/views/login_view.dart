@@ -3,30 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intro_flutter/firebase_options.dart';
 
-//Widget de registro
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
-
-  @override
-  State<RegisterView> createState() => _RegisterViewState();
-}
-
-class _RegisterViewState extends State<RegisterView> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
 //Widget Home
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -49,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
-        title: const Text("Registro"),
+        title: const Text("Iniciar Sesión"),
       ),
       body: FutureBuilder(
         future: Firebase.initializeApp(
@@ -87,7 +72,7 @@ class _HomePageState extends State<HomePage> {
 
                       print(userCredential);
                     },
-                    child: const Text("Registrarse"),
+                    child: const Text("Entrar"),
                   ),
                 ],
               );
