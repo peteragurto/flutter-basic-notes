@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_flutter/firebase_options.dart';
+import 'package:intro_flutter/views/login_view.dart';
 import 'package:intro_flutter/views/register_view.dart';
 
 void main() {
@@ -30,12 +31,13 @@ class HomePage extends StatelessWidget {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              final user = FirebaseAuth.instance.currentUser;
+              /*final user = FirebaseAuth.instance.currentUser;
               if (user?.emailVerified ?? false) {
                 return const Text("Listo");
               } else {
                 return const VerifyEmailView();
-              }
+              }*/
+              return const LoginView();
             default:
               return const Text("Cargando");
           }

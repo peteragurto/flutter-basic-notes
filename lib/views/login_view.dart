@@ -30,14 +30,23 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextField(
           controller: _email,
           enableSuggestions: false,
           autocorrect: false,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: "Introduce tu email",
+            border: OutlineInputBorder(
+              borderRadius:
+                  BorderRadius.circular(10.0), // Para esquinas redondeadas
+              borderSide: const BorderSide(
+                color: Colors.blue,
+                width: 2.0,
+              ),
+            ),
           ),
         ),
         TextField(
@@ -45,8 +54,17 @@ class _LoginViewState extends State<LoginView> {
           obscureText: true,
           enableSuggestions: false,
           autocorrect: false,
-          decoration:
-              const InputDecoration(hintText: "Introduce tu contraseña"),
+          decoration: InputDecoration(
+            hintText: "Introduce tu contraseña",
+            border: OutlineInputBorder(
+              borderRadius:
+                  BorderRadius.circular(10.0), // Para esquinas redondeadas
+              borderSide: const BorderSide(
+                color: Colors.blue,
+                width: 2.0,
+              ),
+            ),
+          ),
         ),
         TextButton(
           onPressed: () async {
@@ -67,6 +85,9 @@ class _LoginViewState extends State<LoginView> {
           },
           child: const Text("Entrar"),
         ),
+        TextButton(
+            onPressed: () {},
+            child: const Text("Aún no tienes cuenta? Registrate aquí"))
       ],
     );
   }
