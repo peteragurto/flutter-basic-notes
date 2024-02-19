@@ -62,6 +62,8 @@ class NotesView extends StatefulWidget {
   State<NotesView> createState() => _NotesViewState();
 }
 
+enum MenuAction { logout }
+
 class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,17 @@ class _NotesViewState extends State<NotesView> {
       appBar: AppBar(
         title: const Text("UI Principal"),
         backgroundColor: Colors.amber,
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<MenuAction>(
+              onSelected: (value) {},
+              itemBuilder: (context) {
+                return const [
+                  PopupMenuItem<MenuAction>(
+                      value: MenuAction.logout, child: Text("Cerrar sesión"))
+                ];
+              })
+        ],
       ),
       body: const Text("Hola mundo"),
     );
