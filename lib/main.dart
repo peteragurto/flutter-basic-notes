@@ -32,28 +32,45 @@ class HomePage extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
-            print(user != null);
-            print(user?.emailVerified);
             if (user != null) {
               // Forzar la actualización de la información del usuario
               if (user.emailVerified) {
-                print("Está verificado");
+                return const NotesView();
               } else {
                 return const VerifyEmailView();
               }
             } else {
               return const LoginView();
             }
-            /*if (user?.emailVerified ?? false) {
+          /*if (user?.emailVerified ?? false) {
                 return const Text("Listo");
               } else {
                 return const VerifyEmailView();
               }*/
-            return const Text("Hecho");
           default:
             return const CircularProgressIndicator();
         }
       },
+    );
+  }
+}
+
+class NotesView extends StatefulWidget {
+  const NotesView({super.key});
+
+  @override
+  State<NotesView> createState() => _NotesViewState();
+}
+
+class _NotesViewState extends State<NotesView> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("UI Principal"),
+        backgroundColor: Colors.amber,
+      ),
+      body: const Text("Hola mundo"),
     );
   }
 }
