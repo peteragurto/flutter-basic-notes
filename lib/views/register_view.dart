@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
+import 'package:intro_flutter/constants/routes.dart';
 
 //Widget de registro
 class RegisterView extends StatefulWidget {
@@ -76,8 +77,10 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           TextButton(
               onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil("/login/", (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  loginRoute,
+                  (route) => false,
+                );
               },
               child: const Text("Ya estás registrado? Entra"))
         ],
