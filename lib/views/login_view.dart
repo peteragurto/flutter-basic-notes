@@ -74,13 +74,14 @@ class _LoginViewState extends State<LoginView> {
           ),
           TextButton(
             onPressed: () async {
-              final email = _email.text;
+              final email = _email.text.trim();
               final password = _password.text;
               try {
                 await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/notes/',
                   (route) => false,
