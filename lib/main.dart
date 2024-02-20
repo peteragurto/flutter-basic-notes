@@ -74,8 +74,21 @@ class _NotesViewState extends State<NotesView> {
         backgroundColor: Colors.amber,
         centerTitle: true,
         actions: [
-          PopupMenuButton<MenuAction>(onSelected: (value) {
-            devtools.log(value.toString());
+          PopupMenuButton<MenuAction>(onSelected: (value) async {
+            switch (value) {
+              case MenuAction.logout:
+                final shLogOut = await showLogoutDialog(context);
+                devtools.log(shLogOut.toString());
+                if (shLogOut) {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/login/',
+                    (route) => false,
+                  );
+                }
+                break;
+              default:
+            }
           }, itemBuilder: (context) {
             return const [
               PopupMenuItem<MenuAction>(
