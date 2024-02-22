@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'dart:developer' as devtools show log;
 
 import 'package:intro_flutter/constants/routes.dart';
+import 'package:intro_flutter/utilities/show_error_dialog.dart';
 
 //Widget Home
 class LoginView extends StatefulWidget {
@@ -92,10 +93,23 @@ class _LoginViewState extends State<LoginView> {
                 );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
-                  await showErrorDialog(context, "Usuario no encontrado");
+                  await showErrorDialog(
+                    context,
+                    "Usuario no encontrado",
+                  );
                 } else if (e.code == 'wrong-password') {
-                  await showErrorDialog(context, "Contraseña incorrecta");
+                  await showErrorDialog(
+                    context,
+                    "Contraseña incorrecta",
+                  );
+                } else {
+                  await showErrorDialog(
+                    context,
+                    "Error: ${e.code}",
+                  );
                 }
+              } catch (e) {
+                showErrorDialog(context, e.toString());
               }
             },
             child: const Text("Entrar"),
@@ -112,26 +126,4 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
-}
-
-Future<void> showErrorDialog(
-  BuildContext context,
-  String text,
-) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Se presentó un error"),
-        content: Text(text),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Ok"))
-        ],
-      );
-    },
-  );
 }
