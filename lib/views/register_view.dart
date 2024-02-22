@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 import 'package:intro_flutter/constants/routes.dart';
+import 'package:intro_flutter/utilities/show_error_dialog.dart';
 
 //Widget de registro
 class RegisterView extends StatefulWidget {
@@ -67,13 +70,13 @@ class _RegisterViewState extends State<RegisterView> {
                 devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
-                  devtools.log("Contraseña débil");
+                  showErrorDialog(context, "Contraseña débil");
                 } else if (e.code == 'email-already-in-use') {
-                  devtools.log("Email en uso, pruebe otro");
+                  showErrorDialog(context, "Correo en uso,pruebe otro");
                 } else if (e.code == 'invalid-email') {
-                  devtools.log("Error con su email");
+                  showErrorDialog(context, "Correo inválido");
                 } else {
-                  devtools.log(e.code.toString());
+                  showErrorDialog(context, "Error ${e.code}");
                 }
               }
             },
