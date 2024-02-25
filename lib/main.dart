@@ -1,8 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_flutter/constants/routes.dart';
-import 'package:intro_flutter/firebase_options.dart';
+import 'package:intro_flutter/services/auth/auth_service.dart';
 import 'package:intro_flutter/views/login_view.dart';
 import 'package:intro_flutter/views/notes_view.dart';
 import 'package:intro_flutter/views/register_view.dart';
@@ -30,16 +28,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
+      future: AuthService.firebase().initialize(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            final user = FirebaseAuth.instance.currentUser;
+            final user = AuthService.firebase().currentUser;
             if (user != null) {
               // Forzar la actualización de la información del usuario
-              if (user.emailVerified) {
+              if (user.isEmailVerified) {
                 return const NotesView();
               } else {
                 return const VerifyEmailView();
@@ -47,11 +43,6 @@ class HomePage extends StatelessWidget {
             } else {
               return const LoginView();
             }
-          /*if (user?.emailVerified ?? false) {
-                return const Text("Listo");
-              } else {
-                return const VerifyEmailView();
-              }*/
           default:
             return const CircularProgressIndicator();
         }
