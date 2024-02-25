@@ -1,10 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'dart:developer' as devtools show log;
-
 import 'package:intro_flutter/constants/routes.dart';
+import 'package:intro_flutter/services/auth/auth_exceptions.dart';
+import 'package:intro_flutter/services/auth/auth_service.dart';
 import 'package:intro_flutter/utilities/show_error_dialog.dart';
 
 //Widget Home
@@ -82,12 +81,12 @@ class _LoginViewState extends State<LoginView> {
               final email = _email.text.trim();
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().logIn(
                   email: email,
                   password: password,
                 );
-                final user = FirebaseAuth.instance.currentUser;
-                if (user?.emailVerified ?? false) {
+                final user = AuthService.firebase().currentUser;
+                if (user?.isEmailVerified ?? false) {
                   //Email verificado
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
@@ -100,25 +99,21 @@ class _LoginViewState extends State<LoginView> {
                     (route) => false,
                   );
                 }
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'user-not-found') {
-                  await showErrorDialog(
-                    context,
-                    "Usuario no encontrado",
-                  );
-                } else if (e.code == 'wrong-password') {
-                  await showErrorDialog(
-                    context,
-                    "Contraseña incorrecta",
-                  );
-                } else {
-                  await showErrorDialog(
-                    context,
-                    "Error: ${e.code}",
-                  );
-                }
-              } catch (e) {
-                showErrorDialog(context, e.toString());
+              } on UserNotFoundAuthException {
+                await showErrorDialog(
+                  context,
+                  "Usuario no encontrado",
+                );
+              } on WrongPasswordAuthException {
+                await showErrorDialog(
+                  context,
+                  "Contraseña incorrecta",
+                );
+              } on GenericAuthException {
+                await showErrorDialog(
+                  context,
+                  "Error de Autenticación",
+                );
               }
             },
             child: const Text("Entrar"),
