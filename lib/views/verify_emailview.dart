@@ -1,7 +1,7 @@
 //Widget de verificacion de email
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_flutter/constants/routes.dart';
+import 'package:intro_flutter/services/auth/auth_service.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -25,14 +25,13 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           const Text("Si no has recibido nada, presiona el botón de abajo"),
           TextButton(
             onPressed: () async {
-              final user = FirebaseAuth.instance.currentUser;
-              await user?.sendEmailVerification();
+              AuthService.firebase().sendEmailVerification();
             },
             child: const Text("Enviar verificación de email"),
           ),
           TextButton(
             onPressed: () async {
-              FirebaseAuth.instance.signOut();
+              AuthService.firebase().signOut();
               Navigator.of(context).pushNamedAndRemoveUntil(
                 registerRoute,
                 (route) => false,
