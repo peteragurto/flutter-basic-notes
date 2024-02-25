@@ -36,4 +36,7 @@ class AuthService implements AuthProvider {
 
   @override
   Future<void> signOut() => provider.signOut();
+
+  @override
+  Future<void> initialize() => provider.initialize();
 }
