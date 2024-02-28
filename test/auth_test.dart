@@ -7,12 +7,14 @@ void main() {
   group("Mock Authentication -", () {
     final provider = MockAuthProvider();
     test("Should not be initialized to begin with", () {
-      expect(provider._isInitialized, false);
+      expect(provider.isInitialized, false);
     });
 
     test("NO hacer singOut si no esta inicializado", () {
-      provider.signOut();
-      throwsA(const TypeMatcher<IsNotInitializedException>());
+      expect(
+        provider.signOut(),
+        throwsA(const TypeMatcher<IsNotInitializedException>()),
+      );
     });
 
     test("Deberia estar disponible para iniciar", () async {
@@ -35,14 +37,18 @@ void main() {
 
     test("Crear usuario deberia delegar a login", () async {
       final badEmailUser = provider.createUser(
-          email: "peteragurto@gmail.com", password: "12345");
-      expect(badEmailUser,
-          throwsA(const TypeMatcher<UserNotFoundAuthException>()));
+          email: "pedroagurto@gmail.com", password: "12345");
+      expect(
+        badEmailUser,
+        throwsA(const TypeMatcher<UserNotFoundAuthException>()),
+      );
 
       final badPassUser = provider.createUser(
-          email: "peteragurto@gmail.com", password: "123456");
-      expect(badPassUser,
-          throwsA(const TypeMatcher<WrongPasswordAuthException>()));
+          email: "peteragurto@gmail.com", password: "trululu");
+      expect(
+        badPassUser,
+        throwsA(const TypeMatcher<WrongPasswordAuthException>()),
+      );
 
       final user = await provider.createUser(
         email: "peter",
