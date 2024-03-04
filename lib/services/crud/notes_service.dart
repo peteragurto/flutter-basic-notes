@@ -9,8 +9,177 @@ class UnableToGetDocumentsDirectory implements Exception {}
 
 class DatabaseNotOpenException implements Exception {}
 
+class CouldNotDeleteUser implements Exception {}
+
+class CouldNotDeleteNote implements Exception {}
+
+class CouldNotFindUser implements Exception {}
+
+class CouldNotFindNote implements Exception {}
+
+class CouldNotUpdateNote implements Exception {}
+
+class UserAlreadyExistsException implements Exception {}
+
 class NotesService {
   Database? _db;
+
+  Future<DatabaseUser> getUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+
+    final results = await db.query(
+      userTable,
+      limit: 1,
+      where: 'email = ?',
+      whereArgs: [email.toLowerCase()],
+    );
+
+    if (results.isEmpty) {
+      throw CouldNotFindUser();
+    } else {
+      return DatabaseUser.fromRow(results.first);
+    }
+  }
+
+  Future<DatabaseUser> createUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+    final results = await db.query(
+      userTable,
+      limit: 1,
+      where: 'email = ?',
+      whereArgs: [email.toLowerCase()],
+    );
+    if (results.isNotEmpty) {
+      throw UserAlreadyExistsException();
+    }
+
+    final userId =
+        await db.insert(userTable, {emailColumn: email.toLowerCase()});
+
+    return DatabaseUser(id: userId, email: email);
+  }
+
+  Future<void> deleteUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+    final deleteAccount = await db.delete(
+      userTable,
+      where: 'email = ?',
+      whereArgs: [email.toLowerCase()],
+    );
+
+    if (deleteAccount != 1) {
+      throw CouldNotDeleteUser();
+    }
+  }
+
+  Future<DatabaseNote> getNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+
+    final results = await db.query(
+      notesTable,
+      limit: 1,
+      where: 'id =?',
+      whereArgs: [id],
+    );
+
+    if (results.isEmpty) {
+      throw CouldNotFindNote();
+    } else {
+      return DatabaseNote.fromRow(results.first);
+    }
+  }
+
+  Future<DatabaseNote> createNote({required DatabaseUser owner}) async {
+    final db = _getDatabaseOrThrow();
+
+    //Comprobar si el owner existe en la db
+    final dbUser = await getUser(email: owner.email);
+    if (dbUser != owner) {
+      throw CouldNotFindUser();
+    }
+
+    const text = '';
+    // Crear la nota
+    final noteId = await db.insert(
+      notesTable,
+      {
+        userIdColumn: owner.id,
+        textColumn: text,
+        isSyncedWithCloudColum: 0,
+      },
+    );
+
+    return DatabaseNote(
+      id: noteId,
+      userId: owner.id,
+      text: text,
+      isSyncedWithCloud: false,
+    );
+  }
+
+  Future<void> deleteNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+
+    final deleteNote = await db.delete(
+      notesTable,
+      where: 'id =?',
+      whereArgs: [id],
+    );
+
+    if (deleteNote != 1) {
+      throw CouldNotDeleteNote();
+    }
+  }
+
+  Future<int> deleteAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    return await db.delete(notesTable);
+  }
+
+  Future<List<DatabaseNote>> getAllNotes() async {
+    final db = _getDatabaseOrThrow();
+
+    final results = await db.query(
+      notesTable,
+      orderBy: 'id DESC',
+    );
+
+    return results.map((result) => DatabaseNote.fromRow(result)).toList();
+  }
+
+  Future<DatabaseNote> updateNote({
+    required DatabaseNote note,
+    required String text,
+  }) async {
+    final db = _getDatabaseOrThrow();
+
+    await getNote(id: note.id);
+
+    final updatedRows = await db.update(
+      notesTable,
+      {
+        textColumn: text,
+        isSyncedWithCloudColum: 0,
+      },
+      where: 'id =?',
+      whereArgs: [note.id],
+    );
+
+    if (updatedRows != 1) {
+      throw CouldNotUpdateNote();
+    } else {
+      return await getNote(id: note.id);
+    }
+  }
+
+  Database _getDatabaseOrThrow() {
+    final db = _db;
+    if (db == null) {
+      throw DatabaseNotOpenException();
+    } else {
+      return db;
+    }
+  }
 
   Future<void> open() async {
     if (_db != null) {
