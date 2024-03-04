@@ -7,6 +7,8 @@ class DatabaseAlreadyOpenException implements Exception {}
 
 class UnableToGetDocumentsDirectory implements Exception {}
 
+class DatabaseNotOpenException implements Exception {}
+
 class NotesService {
   Database? _db;
 
@@ -25,6 +27,16 @@ class NotesService {
       await db.execute(createNoteTable);
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
+    }
+  }
+
+  Future<void> close() async {
+    final db = _db;
+    if (db == null) {
+      throw DatabaseNotOpenException();
+    } else {
+      await db.close();
+      _db = null;
     }
   }
 }
