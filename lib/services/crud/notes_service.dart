@@ -18,6 +18,18 @@ class NotesService {
     _notesStreamController.add(_notes);
   }
 
+  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+    try {
+      final user = getUser(email: email);
+      return user;
+    } on CouldNotFindUser {
+      final createdUser = createUser(email: email);
+      return createdUser;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<DatabaseUser> getUser({required String email}) async {
     final db = _getDatabaseOrThrow();
 
@@ -79,7 +91,11 @@ class NotesService {
     if (results.isEmpty) {
       throw CouldNotFindNote();
     } else {
-      return DatabaseNote.fromRow(results.first);
+      final note = DatabaseNote.fromRow(results.first);
+      _notes.removeWhere((note) => note.id == id);
+      _notes.add(note);
+      _notesStreamController.add(_notes);
+      return note;
     }
   }
 
@@ -103,12 +119,17 @@ class NotesService {
       },
     );
 
-    return DatabaseNote(
+    final note = DatabaseNote(
       id: noteId,
       userId: owner.id,
       text: text,
       isSyncedWithCloud: false,
     );
+
+    _notes.add(note);
+    _notesStreamController.add(_notes);
+
+    return note;
   }
 
   Future<void> deleteNote({required int id}) async {
@@ -122,12 +143,18 @@ class NotesService {
 
     if (deleteNote != 1) {
       throw CouldNotDeleteNote();
+    } else {
+      _notes.removeWhere((note) => note.id == id);
+      _notesStreamController.add(_notes);
     }
   }
 
   Future<int> deleteAllNotes() async {
     final db = _getDatabaseOrThrow();
-    return await db.delete(notesTable);
+    final numberOfDeletions = await db.delete(notesTable);
+    _notes = [];
+    _notesStreamController.add(_notes);
+    return numberOfDeletions;
   }
 
   Future<List<DatabaseNote>> getAllNotes() async {
@@ -162,7 +189,11 @@ class NotesService {
     if (updatedRows != 1) {
       throw CouldNotUpdateNote();
     } else {
-      return await getNote(id: note.id);
+      final updatedNote = await getNote(id: note.id);
+      _notes.removeWhere((note) => note.id == updatedNote.id);
+      _notes.add(note);
+      _notesStreamController.add(_notes);
+      return updatedNote;
     }
   }
 
@@ -188,6 +219,7 @@ class NotesService {
       await db.execute(createUserTable);
       //Crear tabla de notas
       await db.execute(createNoteTable);
+      await _cacheNotes();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
     }
