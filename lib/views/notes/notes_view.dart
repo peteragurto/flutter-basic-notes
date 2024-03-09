@@ -31,7 +31,7 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("UI Principal"),
+          title: const Text("Mis Notas"),
           backgroundColor: Colors.amber,
           centerTitle: true,
           actions: [
