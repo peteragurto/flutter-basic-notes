@@ -18,7 +18,6 @@ class _NotesViewState extends State<NotesView> {
   @override
   void initState() {
     _notesService = NotesService();
-    _notesService.open();
     super.initState();
   }
 
@@ -31,36 +30,55 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("UI Principal"),
-        backgroundColor: Colors.amber,
-        centerTitle: true,
-        actions: [
-          PopupMenuButton<MenuAction>(onSelected: (value) async {
-            switch (value) {
-              case MenuAction.logout:
-                final shLogOut = await showLogoutDialog(context);
-                if (shLogOut) {
-                  await AuthService.firebase().signOut();
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,
-                    (route) => false,
-                  );
-                }
-                break;
+        appBar: AppBar(
+          title: const Text("UI Principal"),
+          backgroundColor: Colors.amber,
+          centerTitle: true,
+          actions: [
+            PopupMenuButton<MenuAction>(onSelected: (value) async {
+              switch (value) {
+                case MenuAction.logout:
+                  final shLogOut = await showLogoutDialog(context);
+                  if (shLogOut) {
+                    await AuthService.firebase().signOut();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      loginRoute,
+                      (route) => false,
+                    );
+                  }
+                  break;
+                default:
+              }
+            }, itemBuilder: (context) {
+              return const [
+                PopupMenuItem<MenuAction>(
+                    value: MenuAction.logout, child: Text("Cerrar sesión"))
+              ];
+            })
+          ],
+        ),
+        body: FutureBuilder(
+          future: _notesService.getOrCreateUser(email: userEmail),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                return StreamBuilder(
+                  stream: _notesService.allNotes,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Text("Esperando tus notas");
+                      default:
+                        return const CircularProgressIndicator();
+                    }
+                  },
+                );
               default:
+                return const CircularProgressIndicator();
             }
-          }, itemBuilder: (context) {
-            return const [
-              PopupMenuItem<MenuAction>(
-                  value: MenuAction.logout, child: Text("Cerrar sesión"))
-            ];
-          })
-        ],
-      ),
-      body: const Text("Hola mundo"),
-    );
+          },
+        ));
   }
 }
 
