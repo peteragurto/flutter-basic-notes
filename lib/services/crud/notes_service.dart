@@ -35,7 +35,6 @@ class NotesService {
 
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
     try {
-      debugPrint("Buscando usuario con email: $email");
       final user = await getUser(email: email);
       debugPrint("Usuario encontrado: $user");
       return user;
@@ -53,8 +52,6 @@ class NotesService {
     await ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
-    debugPrint("Obteniendo usuario con correo electrónico: $email");
-
     try {
       final results = await db.query(
         userTable,
@@ -63,7 +60,6 @@ class NotesService {
         whereArgs: [email.toLowerCase()],
       );
 
-      debugPrint("Resultados de la consulta: $results");
       if (results.isEmpty) {
         debugPrint("Se fue todo a la mrda");
         throw CouldNotFindUser();
