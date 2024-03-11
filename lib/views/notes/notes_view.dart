@@ -65,10 +65,7 @@ class _NotesViewState extends State<NotesView> {
           ],
         ),
         body: FutureBuilder(
-          future: _notesService.getOrCreateUser(email: userEmail).then((user) {
-            debugPrint("Usuario obtenido: $user");
-            return user; // Retorna el usuario, o null si hubo un error
-          }),
+          future: _notesService.getOrCreateUser(email: userEmail),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
