@@ -26,11 +26,24 @@ class _NewNoteViewState extends State<NewNoteView> {
     if (existingNote != null) {
       return existingNote;
     }
-    final currentUser = AuthService.firebase().currentUser!;
-    final email = currentUser.email!;
-    final owner = await _noteservice.getUser(email: email);
+    final currentUser = AuthService.firebase().currentUser;
+    debugPrint("Usuario actual: $currentUser");
+    if (currentUser == null) {
+      return Future.error("No hay usuario actual");
+    }
 
-    return await _noteservice.createNote(owner: owner);
+    final email = currentUser.email;
+    debugPrint("Correo electrónico: $email");
+    if (email == null) {
+      return Future.error("El usuario no tiene correo electrónico");
+    }
+
+    final owner = await _noteservice.getUser(email: email);
+    debugPrint("Propietario: $owner");
+
+    final nNote = await _noteservice.createNote(owner: owner);
+    debugPrint("Nota: $nNote");
+    return nNote;
   }
 
   void _deleteNoteIfIsEmpty() {
@@ -78,11 +91,34 @@ class _NewNoteViewState extends State<NewNoteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Añadir nueva nota"),
-        backgroundColor: Colors.amber,
-      ),
-      body: const Text("Escribe tu nueva nota"),
-    );
+        appBar: AppBar(
+          title: const Text("Añadir nueva nota"),
+          backgroundColor: Colors.amber,
+        ),
+        body: FutureBuilder(
+            future: createNoteInView(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return const CircularProgressIndicator();
+                case ConnectionState.done:
+                  if (snapshot.hasData) {
+                    final note = snapshot.data as DatabaseNote;
+                    _note = note;
+                    _setupTextControllerListener();
+                    return TextField(
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration:
+                          const InputDecoration(hintText: "Escribe tu nota"),
+                    );
+                  } else {
+                    return const Text("Error: No se pudo crear la nota");
+                  }
+                default:
+                  return const CircularProgressIndicator();
+              }
+            }));
   }
 }

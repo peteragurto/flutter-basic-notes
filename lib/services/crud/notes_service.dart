@@ -28,10 +28,14 @@ class NotesService {
 
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
     try {
-      final user = getUser(email: email);
+      debugPrint("Buscando usuario con email: $email");
+      final user = await getUser(email: email);
+      debugPrint("Usuario encontrado: $user");
       return user;
     } on CouldNotFindUser {
-      final createdUser = createUser(email: email);
+      debugPrint("Usuario no encontrado, creando...");
+      final createdUser = await createUser(email: email);
+      debugPrint("Usuario creado: $createdUser");
       return createdUser;
     } catch (e) {
       rethrow;
@@ -42,17 +46,26 @@ class NotesService {
     await ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
-    final results = await db.query(
-      userTable,
-      limit: 1,
-      where: 'email = ?',
-      whereArgs: [email.toLowerCase()],
-    );
+    debugPrint("Obteniendo usuario con correo electrónico: $email");
 
-    if (results.isEmpty) {
-      throw CouldNotFindUser();
-    } else {
-      return DatabaseUser.fromRow(results.first);
+    try {
+      final results = await db.query(
+        userTable,
+        limit: 1,
+        where: 'email = ?',
+        whereArgs: [email.toLowerCase()],
+      );
+
+      debugPrint("Resultados de la consulta: $results");
+      if (results.isEmpty) {
+        debugPrint("Se fue todo a la mrda");
+        throw CouldNotFindUser();
+      } else {
+        debugPrint("Devolviendo usuario");
+        return DatabaseUser.fromRow(results.first);
+      }
+    } catch (e) {
+      rethrow; // Reenviar la excepción
     }
   }
 
