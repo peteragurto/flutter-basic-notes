@@ -29,7 +29,7 @@ class NotesService {
 
   Future<void> _cacheNotes() async {
     final allNotes = await getAllNotes();
-    _notes = allNotes;
+    _notes = allNotes.toList();
     _notesStreamController.add(_notes);
   }
 
@@ -112,7 +112,7 @@ class NotesService {
     final results = await db.query(
       notesTable,
       limit: 1,
-      where: 'id =?',
+      where: 'id = ?',
       whereArgs: [id],
     );
 
@@ -167,11 +167,11 @@ class NotesService {
 
     final deleteNote = await db.delete(
       notesTable,
-      where: 'id =?',
+      where: 'id = ?',
       whereArgs: [id],
     );
 
-    if (deleteNote != 1) {
+    if (deleteNote == 0) {
       throw CouldNotDeleteNote();
     } else {
       _notes.removeWhere((note) => note.id == id);
@@ -188,16 +188,15 @@ class NotesService {
     return numberOfDeletions;
   }
 
-  Future<List<DatabaseNote>> getAllNotes() async {
+  Future<Iterable<DatabaseNote>> getAllNotes() async {
     await ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final results = await db.query(
       notesTable,
-      orderBy: 'id DESC',
     );
 
-    return results.map((result) => DatabaseNote.fromRow(result)).toList();
+    return results.map((result) => DatabaseNote.fromRow(result));
   }
 
   Future<DatabaseNote> updateNote({
@@ -207,24 +206,24 @@ class NotesService {
     await ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
+    // Asegurarnos de que exista la nota
     await getNote(id: note.id);
 
+    // Actualizar DB
     final updatedRows = await db.update(
       notesTable,
       {
         textColumn: text,
         isSyncedWithCloudColum: 0,
       },
-      where: 'id =?',
-      whereArgs: [note.id],
     );
 
-    if (updatedRows != 1) {
+    if (updatedRows == 0) {
       throw CouldNotUpdateNote();
     } else {
       final updatedNote = await getNote(id: note.id);
       _notes.removeWhere((note) => note.id == updatedNote.id);
-      _notes.add(note);
+      _notes.add(updatedNote);
       _notesStreamController.add(_notes);
       return updatedNote;
     }

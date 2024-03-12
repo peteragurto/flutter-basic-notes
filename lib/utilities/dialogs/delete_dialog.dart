@@ -8,7 +8,7 @@ Future<bool> showDeleteDialog(BuildContext context) {
     content: "¿Seguro que quieres borrar esta nota?",
     optionsBuilder: () => {
       'Cancelar': false,
-      'Salir': true,
+      'Borrar': true,
     },
   ).then(
     (value) => value ?? false,
