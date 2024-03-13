@@ -9,16 +9,16 @@ class NotesListView extends StatelessWidget {
   final DeleteNoteCallback onDeleteNote;
 
   const NotesListView({
-    super.key,
+    Key? key,
     required this.notes,
     required this.onDeleteNote,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: notes.length,
-      itemBuilder: ((context, index) {
+      itemBuilder: (context, index) {
         final note = notes[index];
         return ListTile(
           title: Text(
@@ -37,7 +37,7 @@ class NotesListView extends StatelessWidget {
             icon: const Icon(Icons.delete),
           ),
         );
-      }),
+      },
     );
   }
 }
