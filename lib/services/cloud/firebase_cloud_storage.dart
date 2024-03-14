@@ -3,7 +3,7 @@ import 'package:intro_flutter/services/cloud/cloud_note.dart';
 import 'package:intro_flutter/services/cloud/cloud_storage_constants.dart';
 import 'package:intro_flutter/services/cloud/cloud_storage_exceptions.dart';
 
-class FirebaseClousStorage {
+class FirebaseCloudStorage {
   final notes = FirebaseFirestore.instance.collection('notes');
 
   Future<void> deleteNote({required String documentId}) async {
@@ -39,30 +39,30 @@ class FirebaseClousStorage {
           )
           .get()
           .then(
-            (value) => value.docs.map(
-              (doc) {
-                return CloudNote(
-                  documentId: doc.id,
-                  ownerUserId: doc.data()[ownerUserIdFieldName] as String,
-                  text: doc.data()[textFieldName] as String,
-                );
-              },
-            ),
+            (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)),
           );
     } catch (e) {
       throw CouldNotGetAllNotesException();
     }
   }
 
-  void createNewNote({required String ownerUserId}) async {
-    await notes.add({
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    final document = await notes.add({
       ownerUserIdFieldName: ownerUserId,
       textFieldName: '',
     });
+
+    final fetchedNote = await document.get();
+
+    return CloudNote(
+      documentId: fetchedNote.id,
+      ownerUserId: ownerUserId,
+      text: '',
+    );
   }
 
-  static final FirebaseClousStorage _shared =
-      FirebaseClousStorage._sharedInstance();
-  FirebaseClousStorage._sharedInstance();
-  factory FirebaseClousStorage() => _shared;
+  static final FirebaseCloudStorage _shared =
+      FirebaseCloudStorage._sharedInstance();
+  FirebaseCloudStorage._sharedInstance();
+  factory FirebaseCloudStorage() => _shared;
 }

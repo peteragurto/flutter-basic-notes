@@ -1,2 +1,2 @@
 const ownerUserIdFieldName = 'user_id';
-const textFieldName = 'name';
+const textFieldName = 'text';
