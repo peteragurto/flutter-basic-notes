@@ -80,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           TextButton(
             onPressed: () async {
-              final email = _email.text.trim();
+              final email = _email.text;
               final password = _password.text;
               try {
                 context.read<AuthBloc>().add(
