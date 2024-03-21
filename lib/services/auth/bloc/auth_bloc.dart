@@ -11,6 +11,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await provider.sendEmailVerification();
       emit(state);
     });
+
     on<AuthEventRegister>((event, emit) async {
       final email = event.email;
       final password = event.password;
@@ -54,7 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         const AuthStateLoggedOut(
           exception: null,
           isLoading: true,
-          loadingText: 'Please wait while I log you in',
+          loadingText: 'Espera mientras te logeas',
         ),
       );
       final email = event.email;

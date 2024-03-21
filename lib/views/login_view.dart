@@ -40,17 +40,18 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, 'User not found');
+            await showErrorDialog(context, 'Usuario no encontrado');
           } else if (state.exception is WrongPasswordAuthException) {
-            await showErrorDialog(context, 'Wrong credentials');
+            await showErrorDialog(context, 'Credenciales incorrectas');
           } else if (state.exception is GenericAuthException) {
-            await showErrorDialog(context, 'Authentication error');
+            await showErrorDialog(context, 'Error de autenticación');
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          title: const Text("Ingresar"),
+          backgroundColor: Colors.amber,
         ),
         body: Column(
           children: [
@@ -60,7 +61,7 @@ class _LoginViewState extends State<LoginView> {
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
-                hintText: 'Enter your email here',
+                hintText: 'Ingresa tu email aquí',
               ),
             ),
             TextField(
@@ -69,7 +70,7 @@ class _LoginViewState extends State<LoginView> {
               enableSuggestions: false,
               autocorrect: false,
               decoration: const InputDecoration(
-                hintText: 'Enter your password here',
+                hintText: 'Ingresa tu contraseña aquí',
               ),
             ),
             TextButton(
@@ -83,15 +84,15 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     );
               },
-              child: const Text('Login'),
+              child: const Text('Ingresar'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 context.read<AuthBloc>().add(
                       const AuthEventShouldRegister(),
                     );
               },
-              child: const Text('Not registered yet? Register here!'),
+              child: const Text('No estás registrado aún? Registrate aquí!'),
             )
           ],
         ),
