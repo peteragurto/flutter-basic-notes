@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intro_flutter/constants/routes.dart';
+import 'package:intro_flutter/helpers/loading/loading_screen.dart';
 import 'package:intro_flutter/services/auth/bloc/auth_bloc.dart';
 import 'package:intro_flutter/services/auth/bloc/auth_event.dart';
 import 'package:intro_flutter/services/auth/bloc/auth_state.dart';
@@ -14,26 +15,40 @@ import 'package:intro_flutter/views/verify_emailview.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-    title: "Flutter Demo",
-    theme: ThemeData(primaryColor: Colors.amber),
-    home: BlocProvider<AuthBloc>(
-      create: (context) => AuthBloc(FirebaseAuthProvider()),
-      child: const HomePage(),
+  runApp(
+    MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(FirebaseAuthProvider()),
+        child: const HomePage(),
+      ),
+      routes: {
+        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
+      },
     ),
-    routes: {
-      createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView()
-    },
-  ));
+  );
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.isLoading) {
+          LoadingScreen().show(
+            context: context,
+            text: state.loadingText ?? 'Please wait a moment',
+          );
+        } else {
+          LoadingScreen().hide();
+        }
+      },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
           return const NotesView();
@@ -50,5 +65,5 @@ class HomePage extends StatelessWidget {
         }
       },
     );
-  } //
+  }
 }

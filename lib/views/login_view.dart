@@ -7,11 +7,10 @@ import 'package:intro_flutter/services/auth/bloc/auth_bloc.dart';
 import 'package:intro_flutter/services/auth/bloc/auth_event.dart';
 import 'package:intro_flutter/services/auth/bloc/auth_state.dart';
 import 'package:intro_flutter/utilities/dialogs/error_dialog.dart';
-import 'package:intro_flutter/utilities/dialogs/loading_dialog.dart';
 
 //Widget Home
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  const LoginView({Key? key}) : super(key: key);
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -20,7 +19,6 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  CloseDialog? _closeDialogHandle;
 
   @override
   void initState() {
@@ -41,49 +39,28 @@ class _LoginViewState extends State<LoginView> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialog = _closeDialogHandle;
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandle = null;
-          } else if (state.isLoading && closeDialog == null) {
-            _closeDialogHandle = showLoadingDialog(
-              context: context,
-              text: 'Cargando',
-            );
-          }
-
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, 'Usuario no encontrado');
+            await showErrorDialog(context, 'User not found');
           } else if (state.exception is WrongPasswordAuthException) {
-            await showErrorDialog(context, 'Credenciales incorrectas');
+            await showErrorDialog(context, 'Wrong credentials');
           } else if (state.exception is GenericAuthException) {
-            await showErrorDialog(context, 'Error de autenticación');
+            await showErrorDialog(context, 'Authentication error');
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Login"),
-          backgroundColor: Colors.amber,
+          title: const Text('Login'),
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               controller: _email,
               enableSuggestions: false,
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: "Introduce tu email",
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(10.0), // Para esquinas redondeadas
-                  borderSide: const BorderSide(
-                    color: Colors.blue,
-                    width: 2.0,
-                  ),
-                ),
+              decoration: const InputDecoration(
+                hintText: 'Enter your email here',
               ),
             ),
             TextField(
@@ -91,16 +68,8 @@ class _LoginViewState extends State<LoginView> {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: InputDecoration(
-                hintText: "Introduce tu contraseña",
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(10.0), // Para esquinas redondeadas
-                  borderSide: const BorderSide(
-                    color: Colors.blue,
-                    width: 2.0,
-                  ),
-                ),
+              decoration: const InputDecoration(
+                hintText: 'Enter your password here',
               ),
             ),
             TextButton(
@@ -114,13 +83,16 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     );
               },
-              child: const Text("Entrar"),
+              child: const Text('Login'),
             ),
             TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
-                },
-                child: const Text("Aún no tienes cuenta? Registrate aquí"))
+              onPressed: () {
+                context.read<AuthBloc>().add(
+                      const AuthEventShouldRegister(),
+                    );
+              },
+              child: const Text('Not registered yet? Register here!'),
+            )
           ],
         ),
       ),
