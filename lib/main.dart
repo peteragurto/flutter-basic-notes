@@ -23,6 +23,7 @@ void main() {
   ));
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Notas',
       theme: ThemeData(
         primarySwatch: Colors.blue,
