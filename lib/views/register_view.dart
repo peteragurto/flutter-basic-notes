@@ -51,13 +51,23 @@ class _RegisterViewState extends State<RegisterView> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.amber[50],
         appBar: AppBar(
-          title: const Text("Registrarse"),
+          title: const Row(
+            children: [
+              Text(
+                "Registrarse ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Icon(Icons.app_registration_rounded)
+            ],
+          ),
           backgroundColor: Colors.amber,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text("Registrate y empieza a crear notas"),
               const SizedBox(height: 16.0),
@@ -66,33 +76,98 @@ class _RegisterViewState extends State<RegisterView> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.email),
                   hintText: "Introduce tu email",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
+              //
+              const SizedBox(height: 24),
+              //
               TextField(
                 controller: _password,
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration:
-                    const InputDecoration(hintText: "Introduce tu contraseña"),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.password_outlined),
+                  hintText: "Introduce tu contraseña",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
               ),
+              //
+              const SizedBox(height: 24),
+              //
               TextButton(
                 onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
+                  final email = _email.text.trim();
+                  final password = _password.text.trim();
                   context
                       .read<AuthBloc>()
                       .add(AuthEventRegister(email, password));
                 },
-                child: const Text("Registrarse"),
+                child: Text(
+                  "Registrarse",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.amber[800],
+                  ),
+                ),
               ),
               TextButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(const AuthEventLogOut());
                   },
-                  child: const Text("Ya estás registrado? Ingresa"))
+                  child: Text(
+                    "Ya estás registrado? Ingresa",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.amber[800],
+                    ),
+                  ))
             ],
           ),
         ),

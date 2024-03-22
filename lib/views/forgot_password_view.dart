@@ -49,39 +49,95 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.amber[50],
         appBar: AppBar(
-          title: const Text("Recuperar contraseña"),
-          backgroundColor: Colors.amber.withAlpha(100),
+          title: const Row(
+            children: [
+              Text(
+                "Recuperar contraseña ",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Icon(Icons.shield_moon_rounded)
+            ],
+          ),
+          backgroundColor: Colors.amber,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(children: [
-            const Text(
-                'Si olvidaste tu contraseña, ingresa tu email y te enviaremos un enlace para que la modifiques'),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              autofocus: true,
-              controller: _controller,
-              decoration:
-                  const InputDecoration(hintText: 'Ingresa tu email...'),
-            ),
-            //
-            TextButton(
-                onPressed: () {
-                  final email = _controller.text;
-                  context
-                      .read<AuthBloc>()
-                      .add(AuthEventForgotPassword(email: email));
-                },
-                child: const Text('Enviar enlace para cambiar contraseña')),
-            //
-            TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventLogOut());
-                },
-                child: const Text('Volver al Login'))
-          ]),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                  'Si olvidaste tu contraseña, ingresa tu email y te enviaremos un enlace para que la modifiques'),
+              //
+              const SizedBox(height: 16),
+              //
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                autofocus: true,
+                controller: _controller,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.attach_email_outlined),
+                  hintText: 'Ingresa tu email...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+              //
+              const SizedBox(height: 16),
+              //
+              TextButton(
+                  onPressed: () {
+                    final email = _controller.text;
+                    context
+                        .read<AuthBloc>()
+                        .add(AuthEventForgotPassword(email: email));
+                  },
+                  child: Text(
+                    'Enviar enlace para cambiar contraseña',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.amber[800],
+                    ),
+                  )),
+              //
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
+                  },
+                  child: Text(
+                    'Volver al Login',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.amber[800],
+                    ),
+                  ))
+            ],
+          ),
         ),
       ),
     );

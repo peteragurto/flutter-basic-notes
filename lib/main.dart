@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intro_flutter/constants/routes.dart';
 import 'package:intro_flutter/helpers/loading/loading_screen.dart';
@@ -16,6 +17,10 @@ import 'package:intro_flutter/views/verify_emailview.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor:
+        Colors.amber[50], // Cambia el color de la barra de botones
+  ));
   runApp(
     MaterialApp(
       title: 'Flutter Notas',
@@ -44,7 +49,7 @@ class HomePage extends StatelessWidget {
         if (state.isLoading) {
           LoadingScreen().show(
             context: context,
-            text: state.loadingText ?? 'Please wait a moment',
+            text: state.loadingText ?? 'Espera un momento',
           );
         } else {
           LoadingScreen().hide();

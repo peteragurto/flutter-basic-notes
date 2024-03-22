@@ -32,15 +32,27 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.amber[50],
         appBar: AppBar(
-          title: const Text('Tus Notas'),
+          title: const Row(
+            children: [
+              Text(
+                'Tus Notas ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              Icon(Icons.notes_outlined)
+            ],
+          ),
           backgroundColor: Colors.amber,
           actions: [
             IconButton(
               onPressed: () {
                 Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
               },
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.note_add_outlined),
             ),
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
@@ -60,6 +72,7 @@ class _NotesViewState extends State<NotesView> {
                   ),
                 ];
               },
+              icon: const Icon(Icons.logout),
             )
           ],
         ),
@@ -71,21 +84,24 @@ class _NotesViewState extends State<NotesView> {
               case ConnectionState.active:
                 if (snapshot.hasData) {
                   final allNotes = snapshot.data as Iterable<CloudNote>;
-                  return NotesListView(
-                    notes: allNotes,
-                    onDeleteNote: (note) async {
-                      await _notesService.deleteNote(
-                          documentId: note.documentId);
-                    },
-                    onTap: (note) {
-                      Navigator.of(context).pushNamed(
-                        createOrUpdateNoteRoute,
-                        arguments: note,
-                      );
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: NotesListView(
+                      notes: allNotes,
+                      onDeleteNote: (note) async {
+                        await _notesService.deleteNote(
+                            documentId: note.documentId);
+                      },
+                      onTap: (note) {
+                        Navigator.of(context).pushNamed(
+                          createOrUpdateNoteRoute,
+                          arguments: note,
+                        );
+                      },
+                    ),
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Scaffold();
                 }
               default:
                 return const CircularProgressIndicator();

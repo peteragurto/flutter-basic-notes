@@ -93,9 +93,18 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amber[50],
       appBar: AppBar(
         backgroundColor: Colors.amber,
-        title: const Text('Nueva nota'),
+        title: const Row(
+          children: [
+            Text(
+              'Nueva nota ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Icon(Icons.note),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () async {
@@ -116,12 +125,42 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               _setupTextControllerListener();
-              return TextField(
-                controller: _textController,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'Start typing your note...',
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  child: TextField(
+                    controller: _textController,
+                    keyboardType: TextInputType.multiline,
+                    autofocus: false,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.note_alt_outlined),
+                      hintText: 'Empieza a escribir...',
+                      filled: true,
+                      fillColor: Colors.amber.withAlpha(100),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(
+                          width: 2.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: const BorderSide(
+                          width: 2.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: const BorderSide(
+                          width: 2.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               );
             default:

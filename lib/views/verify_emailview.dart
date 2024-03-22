@@ -21,26 +21,29 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         title: const Text("Verificar email"),
         backgroundColor: Colors.amber,
       ),
-      body: Column(
-        children: [
-          const Text(
-              "Hemos enviado un email de verificación, Por favor, ábrelo para verificar tu cuenta"),
-          const Text("Si no has recibido nada, presiona el botón de abajo"),
-          TextButton(
-            onPressed: () async {
-              context
-                  .read<AuthBloc>()
-                  .add(const AuthEventSendEmailVerification());
-            },
-            child: const Text("Enviar verificación de email"),
-          ),
-          TextButton(
-            onPressed: () async {
-              context.read<AuthBloc>().add(const AuthEventLogOut());
-            },
-            child: const Text("Reiniciar"),
-          )
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+                "Hemos enviado un email de verificación, Por favor, ábrelo para verificar tu cuenta"),
+            const Text("Si no has recibido nada, presiona el botón de abajo"),
+            TextButton(
+              onPressed: () async {
+                context
+                    .read<AuthBloc>()
+                    .add(const AuthEventSendEmailVerification());
+              },
+              child: const Text("Enviar verificación de email"),
+            ),
+            TextButton(
+              onPressed: () async {
+                context.read<AuthBloc>().add(const AuthEventLogOut());
+              },
+              child: const Text("Reiniciar"),
+            )
+          ],
+        ),
       ),
     );
   }
